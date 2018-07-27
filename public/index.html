@@ -1,0 +1,15 @@
+<!DOCTYPE html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>my-demo</title><link rel=stylesheet href=static/css/common.css><link href=/static/css/app.4faa478f41933ba1c4be35cb72d9d0ca.css rel=stylesheet></head><body><div id=app></div><script type=text/javascript src=/static/js/manifest.2ae2e69a05c33dfc65f8.js></script><script type=text/javascript src=/static/js/vendor.1748317793fd05195ff8.js></script><script type=text/javascript src=/static/js/app.5192b60617f4e754d3a9.js></script></body><script>// rem布局，动态控制页面的font-size
+    fnResize();
+    window.onresize = function () {
+      fnResize()
+    };
+    function fnResize() {
+      let deviceWidth = document.documentElement.clientWidth || window.innerWidth;
+      if (deviceWidth >= 720) {
+        deviceWidth = 720
+      }
+      if (deviceWidth <= 320) {
+        deviceWidth = 320
+      }
+      document.documentElement.style.fontSize = (deviceWidth / 7.2) + 'px';
+    }</script></html>
