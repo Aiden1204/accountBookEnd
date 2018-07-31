@@ -1,27 +1,15 @@
 const router = require('koa-router')()
-
-
-// router.get('/', async (ctx, next) => {
-//   console.log("3333");
-//   await ctx.render('index', {
-//     title: 'Hello Koa 2!'
-//   })
-// })
-//
-// router.get('/string', async (ctx, next) => {
-//   ctx.body = 'koa2 string'
-// })
-//
-// router.get('/json', async (ctx, next) => {
-//   ctx.body = {
-//     title: 'koa2 json'
-//   }
-// })
+const client = require('../routes/config')
 
 router.get('/test', async (ctx, next) => {
-    ctx.body = {
-        flag:"1"
-    }
+    await client.query("select * from user_info;", []).then(function(result) {
+        console.log(result);
+        ctx.body = result;
+    }, function(error){
+        // error
+        console.log("报错了");
+        console.log(error);
+    });
 })
 
 
