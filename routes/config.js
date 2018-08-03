@@ -5,13 +5,13 @@ var client = new Client({
         // host: "127.0.0.1",
         host: "localhost",
         port: 3306,
-        database: "nodejsdb",
+        database: "demo",
         user: "root",
         password: "123456"
     }
 });
 
 console.log("mySql启动");
-console.log(client._options);
+// console.log(client._options);
 
-module.exports = client
+module.exports = client;
