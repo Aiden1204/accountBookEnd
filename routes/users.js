@@ -29,21 +29,50 @@ router.post('/register', async (ctx, next) => {
         // 用户名未注册
         await client.query("INSERT INTO user (userName,password) VALUES (?,?);", [data.username,data.password]).then(function(result) {
             console.log(result);
-            ctx.body = {
-                returnCode:'000000',
-                message:'注册成功'
-            };
+            if(result.length === 0){
+                ctx.body = {
+                    returnCode:'999999',
+                    errMessage:'用户名或密码不正确'
+                };
+            }
         }, function(error){
             // error
             console.log("用户注册后台报错");
             console.log(error);
             ctx.body = {
                 returnCode:'999999',
-                errMessage:'注册未成功'
+                errMessage:'登录操作'
             };
         });
     }
 });
 
+// 用户登录
+router.post('/login', async (ctx, next) => {
+    let data = ctx.request.body.params;
+    console.log(data)
+    await client.query("select userName from user where userName = ? and password = ?;", [data.username,data.password]).then(function(result) {
+        console.log(result);
+        if(result.length === 0){
+            ctx.body = {
+                returnCode:'999999',
+                errMessage:'账号或密码错误'
+            };
+        } else {
+            ctx.body = {
+                returnCode:'000000',
+                message:'登录成功'
+            };
+        }
+    }, function(error){
+        // error
+        console.log("用户登录失败，数据库报错");
+        console.log(error);
+        ctx.body = {
+            returnCode:'999999',
+            errMessage:'登录失败，请检查网络'
+        };
+    });
+});
 
 module.exports = router
