@@ -35,8 +35,12 @@ router.post('/register', async (ctx, next) => {
             };
         }, function(error){
             // error
-            console.log("报错了");
+            console.log("用户注册后台报错");
             console.log(error);
+            ctx.body = {
+                returnCode:'999999',
+                errMessage:'注册未成功'
+            };
         });
     }
 });
