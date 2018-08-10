@@ -16,7 +16,7 @@ router.post('/register', async (ctx, next) => {
         }
     }, function(error){
         // error
-        console.log("报错了");
+        console.log("用户注册报错");
         console.log(error);
     });
     // 用户名已注册
@@ -28,20 +28,19 @@ router.post('/register', async (ctx, next) => {
     } else {
         // 用户名未注册
         await client.query("INSERT INTO user (userName,password) VALUES (?,?);", [data.username,data.password]).then(function(result) {
+            console.log("注册成功",data.username,data.password);
             console.log(result);
-            if(result.length === 0){
                 ctx.body = {
-                    returnCode:'999999',
-                    errMessage:'用户名或密码不正确'
+                    returnCode:'000000',
+                    errMessage:'注册成功'
                 };
-            }
         }, function(error){
             // error
             console.log("用户注册后台报错");
             console.log(error);
             ctx.body = {
                 returnCode:'999999',
-                errMessage:'登录操作'
+                errMessage:'注册失败，请检查网络'
             };
         });
     }
@@ -50,15 +49,17 @@ router.post('/register', async (ctx, next) => {
 // 用户登录
 router.post('/login', async (ctx, next) => {
     let data = ctx.request.body.params;
-    console.log(data)
+    console.log("登录信息",data);
     await client.query("select userName from user where userName = ? and password = ?;", [data.username,data.password]).then(function(result) {
         console.log(result);
         if(result.length === 0){
+            console.log("登录失败，账号密码不正确",data.username,data.password);
             ctx.body = {
                 returnCode:'999999',
                 errMessage:'账号或密码错误'
             };
         } else {
+            console.log("登录成功",data.username,data.password);
             ctx.body = {
                 returnCode:'000000',
                 message:'登录成功'
