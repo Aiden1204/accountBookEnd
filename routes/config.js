@@ -7,7 +7,8 @@ var client = new Client({
         port: 3306,
         database: "demo",
         user: "root",
-        password: "123456"
+        password: "qwe123" //台式数据库
+        // password: "123456"  //笔记本数据库
     }
 });
 
