@@ -59,7 +59,22 @@ router.post('/login', async (ctx, next) => {
                 errMessage:'账号或密码错误'
             };
         } else {
-            console.log("登录成功",data.username,data.password);
+            console.log("登录成功",data.username,data.password,new Date().toLocaleString());
+            // 用cookie保存用户的登录状态
+            ctx.cookies.set(
+                'token',
+                'hello world',
+                {
+                    domain: '172.20.10.5',  // 写cookie所在的域名
+                    path: '/',       // 写cookie所在的路径
+                    maxAge: 10 * 60 * 1000, // cookie有效时长
+                    expires: new Date('2018-11-15'),  // cookie失效时间
+                    httpOnly: false,  // 是否只用于http请求中获取
+                    overwrite: true  // 是否允许重写
+                }
+            );
+            console.log('获取到的cookie',ctx.cookies.get('token'));
+
             ctx.body = {
                 returnCode:'000000',
                 message:'登录成功'

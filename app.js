@@ -24,7 +24,10 @@ app.use(json())
 app.use(logger())
 
 // logger
-app.use(cors())
+app.use(cors({
+    credentials: true,
+    origin: 'http://172.20.10.5:8080'
+}))
 app.use(require('koa-static')(__dirname + '/public'))
 
 app.use(views(__dirname + '/views', {
