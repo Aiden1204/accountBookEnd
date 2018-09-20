@@ -21,9 +21,10 @@ app.use(bodyparser({
   enableTypes:['json', 'form', 'text']
 }))
 app.use(json())
+// logger
 app.use(logger())
 
-// logger
+
 app.use(cors({
     credentials: true,
     origin: 'http://172.20.10.5:8080'

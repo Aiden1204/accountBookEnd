@@ -1,6 +1,7 @@
 const router = require('koa-router')()
 const client = require('../routes/config')
 router.prefix('/users')
+const md5 = require('md5');
 
 
 // 用户注册
@@ -49,9 +50,12 @@ router.post('/register', async (ctx, next) => {
 // 用户登录
 router.post('/login', async (ctx, next) => {
     let data = ctx.request.body.params;
-    console.log("登录信息",data);
-    await client.query("select userName from user where userName = ? and password = ?;", [data.username,data.password]).then(function(result) {
-        console.log(result);
+    let flag = false; //标记用户名密码是否正确
+    let userId = "";
+    let userName = "";
+    console.log("登录信息",data,data.password,new Date().toLocaleString());
+    await client.query("select * from user where userName = ? and password = ?;", [data.username,data.password]).then(function(result) {
+        console.log('查询结果',result);
         if(result.length === 0){
             console.log("登录失败，账号密码不正确",data.username,data.password);
             ctx.body = {
@@ -59,26 +63,9 @@ router.post('/login', async (ctx, next) => {
                 errMessage:'账号或密码错误'
             };
         } else {
-            console.log("登录成功",data.username,data.password,new Date().toLocaleString());
-            // 用cookie保存用户的登录状态
-            ctx.cookies.set(
-                'token',
-                'hello world',
-                {
-                    domain: '172.20.10.5',  // 写cookie所在的域名
-                    path: '/',       // 写cookie所在的路径
-                    maxAge: 10 * 60 * 1000, // cookie有效时长
-                    expires: new Date('2018-11-15'),  // cookie失效时间
-                    httpOnly: false,  // 是否只用于http请求中获取
-                    overwrite: true  // 是否允许重写
-                }
-            );
-            console.log('获取到的cookie',ctx.cookies.get('token'));
-
-            ctx.body = {
-                returnCode:'000000',
-                message:'登录成功'
-            };
+            flag = true;
+            userId = result[0].userId;
+            userName = result[0].userName;
         }
     }, function(error){
         // error
@@ -89,6 +76,46 @@ router.post('/login', async (ctx, next) => {
             errMessage:'登录失败，请检查网络'
         };
     });
+
+    // 账号密码正确时
+    if(flag){
+        let time = new Date();
+        // token生成时间
+        let saveTime = time.toLocaleString();
+        // token过期时间
+        let maxTime = new Date(time.getTime() + 1000*60*60*24).toLocaleString();
+        console.log("saveTime",saveTime);
+        console.log("maxTime",maxTime);
+        // 生成token
+        let token = userId + userName + saveTime + maxTime;
+        // 对token加密
+        token = md5(token);
+        await client.query("update user set saveTime = ?, maxTime = ?, token = ? where userId = ?;", [saveTime,maxTime,token,userId]).then(function(result) {
+            console.log("插入结果",result);
+        }, function(error){
+            // error
+            console.log(error);
+        });
+        // 用cookie保存用户的登录状态
+        ctx.cookies.set(
+            'token',
+            token,
+            {
+                domain: '172.20.10.5',  // 写cookie所在的域名
+                path: '/',       // 写cookie所在的路径
+                maxAge: 10 * 60 * 1000, // cookie有效时长
+                expires: new Date('2018-11-15'),  // cookie失效时间
+                httpOnly: false,  // 是否只用于http请求中获取
+                overwrite: true  // 是否允许重写
+            }
+        );
+        // console.log('获取到的cookie',ctx.cookies.get('token'));
+        console.log("登录成功",data.username,data.password,new Date().toLocaleString());
+        ctx.body = {
+            returnCode:'000000',
+            message:'登录成功'
+        };
+    }
 });
 
 module.exports = router
