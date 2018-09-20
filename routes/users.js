@@ -3,6 +3,22 @@ const client = require('../routes/config')
 router.prefix('/users')
 const md5 = require('md5');
 
+// 生成token方法
+let createToken = (userId,userName) => {
+    let time = new Date();
+    // token生成时间
+    let saveTime = time.toLocaleString();
+    // token过期时间
+    let maxTime = new Date(time.getTime() + 1000*60*60*24).toLocaleString();
+    console.log("saveTime",saveTime);
+    console.log("maxTime",maxTime);
+    // 拼装token
+    let token = userId + userName + saveTime + maxTime;
+    // 对token加密
+    token = md5(token);
+    return token;
+};
+
 
 // 用户注册
 router.post('/register', async (ctx, next) => {
@@ -79,17 +95,8 @@ router.post('/login', async (ctx, next) => {
 
     // 账号密码正确时
     if(flag){
-        let time = new Date();
-        // token生成时间
-        let saveTime = time.toLocaleString();
-        // token过期时间
-        let maxTime = new Date(time.getTime() + 1000*60*60*24).toLocaleString();
-        console.log("saveTime",saveTime);
-        console.log("maxTime",maxTime);
         // 生成token
-        let token = userId + userName + saveTime + maxTime;
-        // 对token加密
-        token = md5(token);
+        let token = createToken(userId,userName);
         await client.query("update user set saveTime = ?, maxTime = ?, token = ? where userId = ?;", [saveTime,maxTime,token,userId]).then(function(result) {
             console.log("插入结果",result);
         }, function(error){
