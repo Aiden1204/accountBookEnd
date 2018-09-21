@@ -3,20 +3,24 @@ const client = require('../routes/config')
 router.prefix('/users')
 const md5 = require('md5');
 
+// 前端服务器的ip
+let frontServer = "172.20.10.5";
+
 // 生成token方法
 let createToken = (userId,userName) => {
-    let time = new Date();
+    let result = {};
+    result.time = new Date();
     // token生成时间
-    let saveTime = time.toLocaleString();
+    result.saveTime = result.time.toLocaleString();
     // token过期时间
-    let maxTime = new Date(time.getTime() + 1000*60*60*24).toLocaleString();
-    console.log("saveTime",saveTime);
-    console.log("maxTime",maxTime);
+    result.maxTime = new Date(result.time.getTime() + 1000*60*60*24).toLocaleString();
+    console.log("saveTime",result.saveTime);
+    console.log("maxTime",result.maxTime);
     // 拼装token
-    let token = userId + userName + saveTime + maxTime;
+    result.token = userId + userName + result.saveTime + result.maxTime;
     // 对token加密
-    token = md5(token);
-    return token;
+    result.token = md5(result.token);
+    return result;
 };
 
 
@@ -96,8 +100,8 @@ router.post('/login', async (ctx, next) => {
     // 账号密码正确时
     if(flag){
         // 生成token
-        let token = createToken(userId,userName);
-        await client.query("update user set saveTime = ?, maxTime = ?, token = ? where userId = ?;", [saveTime,maxTime,token,userId]).then(function(result) {
+        let result = createToken(userId,userName);
+        await client.query("update user set saveTime = ?, maxTime = ?, token = ? where userId = ?;", [result.saveTime,result.maxTime,result.token,userId]).then(function(result) {
             console.log("插入结果",result);
         }, function(error){
             // error
@@ -106,9 +110,9 @@ router.post('/login', async (ctx, next) => {
         // 用cookie保存用户的登录状态
         ctx.cookies.set(
             'token',
-            token,
+            result.token,
             {
-                domain: '172.20.10.5',  // 写cookie所在的域名
+                domain: frontServer,  // 写cookie所在的域名
                 path: '/',       // 写cookie所在的路径
                 maxAge: 10 * 60 * 1000, // cookie有效时长
                 expires: new Date('2018-11-15'),  // cookie失效时间
