@@ -27,7 +27,8 @@ app.use(logger())
 
 app.use(cors({
     credentials: true,
-    origin: 'http://172.20.10.5:8080'
+    // origin: 'http://172.20.10.5:8080'
+    origin: 'http://192.168.11.226:8080'
 }))
 app.use(require('koa-static')(__dirname + '/public'))
 

@@ -4,7 +4,8 @@ router.prefix('/users')
 const md5 = require('md5');
 
 // 前端服务器的ip
-let frontServer = "172.20.10.5";
+// let frontServer = "172.20.10.5";
+let frontServer = "192.168.11.226";
 
 // 生成token方法
 let createToken = (userId,userName) => {
