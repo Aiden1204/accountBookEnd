@@ -1,9 +1,26 @@
+/*初始化css*/
 body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td { margin:0; padding:0; }
 ol,ul,li { list-style:none; }
 table { border-collapse:collapse; }
 html {overflow-y: scroll;}
 
-.fl{float: left}
-.fr{float: right}
-.cl:after {content: "."; display: block; height:0; clear:both; visibility: hidden;}
-.cl{ *zoom:1; }
+#app .fl{float: left}
+#app .fr{float: right}
+#app .cl:after {content: "."; display: block; height:0; clear:both; visibility: hidden;}
+#app .cl{ *zoom:1; }
+
+#app {
+  font-size: 0.24rem;
+}
+
+#app .fl36 {
+  font-size: 0.36rem;
+}
+
+#app .noSelect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Chrome/Safari/Opera */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
+}
